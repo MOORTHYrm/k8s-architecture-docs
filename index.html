@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K8s Production Architecture Pyramid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ── Ambient background orbs ── -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header>
+    <div class="logo-ring"><span>☸</span></div>
+    <h1>K8s Production Architecture</h1>
+    <p class="tagline">AWS EKS · Multi-AZ · Production-Grade · Complete Stack</p>
+    <div class="env-pills">
+      <span class="pill pill-prod">🔴 Production</span>
+      <span class="pill pill-stg">🟡 Staging</span>
+      <span class="pill pill-dev">🟢 Development</span>
+      <span class="pill pill-az">AZ-a · AZ-b · AZ-c</span>
+    </div>
+  </header>
+
+  <!-- ── Legend strip (populated by JS) ── -->
+  <div class="legend-strip" id="legend"></div>
+
+  <!-- ══════════════════════════════════════════
+       PYRAMID CONTAINER
+  ══════════════════════════════════════════ -->
+  <div class="layout">
+    <div class="pyramid-col">
+      <div class="pyramid-title">Click any layer to expand full detail</div>
+      <div class="pyramid-wrap" id="pyramid"></div>
+      <div class="pyramid-base-label">▲ Production-Grade Kubernetes Architecture Pyramid ▲</div>
+      <div class="click-hint">
+        <span class="pulse-dot" style="background:#00e5ff"></span>
+        click a layer to explore · click again to collapse
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       DETAIL PANEL MOUNT (populated by JS)
+  ══════════════════════════════════════════ -->
+  <div id="detailMount"></div>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer>
+    ☸ Production Kubernetes Architecture · AWS EKS Multi-AZ ·
+    Security · HA · HPA · Mesh · Storage · DR · Cost · RBAC · Network Policies
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

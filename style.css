@@ -1,0 +1,486 @@
+/* ═══════════════════════════════════════════════════════════════
+   K8s Production Architecture Pyramid — styles.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens ─────────────────────────────────────────────── */
+:root {
+  --bg:      #020408;
+  --bg2:     #050c14;
+  --grid:    rgba(0, 200, 255, 0.04);
+
+  /* Layer accent colours */
+  --L1:  #00e5ff;   /* foundation      */
+  --L2:  #00bfa5;   /* storage         */
+  --L3:  #ff1744;   /* security        */
+  --L4:  #651fff;   /* networking      */
+  --L5:  #ff6d00;   /* resources       */
+  --L6:  #00e676;   /* autoscaling     */
+  --L7:  #2979ff;   /* workloads       */
+  --L8:  #ffd740;   /* observability   */
+  --L9:  #ff4081;   /* DR              */
+  --L10: #76ff03;   /* cost / peak     */
+
+  --text:    #cdd6f4;
+  --muted:   #6c7086;
+  --surface: rgba(10, 20, 35, 0.85);
+  --border:  rgba(0, 200, 255, 0.15);
+}
+
+/* ── Reset ──────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #020408; }
+::-webkit-scrollbar-thumb { background: #1e2d45; border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   BODY & BACKGROUND
+   ═══════════════════════════════════════════════════════════════ */
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated grid overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: gridPulse 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.8; }
+  50%       { opacity: 1.4; }
+}
+
+/* ── Ambient glow orbs ─────────────────────────────────────────── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+}
+.orb1 {
+  width: 600px; height: 600px;
+  background: #00e5ff;
+  top: -200px; left: -200px;
+  animation: drift1 12s ease-in-out infinite;
+}
+.orb2 {
+  width: 500px; height: 500px;
+  background: #651fff;
+  bottom: -150px; right: -100px;
+  animation: drift2 15s ease-in-out infinite;
+}
+.orb3 {
+  width: 400px; height: 400px;
+  background: #ff1744;
+  top: 40%; left: 30%;
+  animation: drift3 10s ease-in-out infinite;
+}
+
+@keyframes drift1 { 0%, 100% { transform: translate(0, 0); }   50% { transform: translate(80px, 60px); } }
+@keyframes drift2 { 0%, 100% { transform: translate(0, 0); }   50% { transform: translate(-60px, -80px); } }
+@keyframes drift3 { 0%, 100% { transform: translate(0, 0); }   50% { transform: translate(40px, -40px); } }
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════ */
+header {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 40px 24px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Rotating K8s wheel logo */
+.logo-ring {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--L1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 30px var(--L1), inset 0 0 20px rgba(0, 229, 255, 0.1);
+  animation: spin 20s linear infinite;
+}
+.logo-ring span {
+  animation: spinBack 20s linear infinite;
+  display: block;
+}
+@keyframes spin     { to { transform: rotate(360deg);  } }
+@keyframes spinBack { to { transform: rotate(-360deg); } }
+
+h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--L1), #fff, var(--L4), var(--L1));
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer { to { background-position: 300%; } }
+
+.tagline {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Environment pills */
+.env-pills {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.pill {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  border: 1px solid currentColor;
+}
+.pill-dev  { color: #00e676; background: rgba(0,   230, 118, 0.08); }
+.pill-stg  { color: #ffd740; background: rgba(255, 215,  64, 0.08); }
+.pill-prod { color: #ff4081; background: rgba(255,  64, 129, 0.08); }
+.pill-az   { color: #00e5ff; background: rgba(0,   229, 255, 0.08); }
+
+/* ═══════════════════════════════════════════════════════════════
+   LEGEND STRIP
+   ═══════════════════════════════════════════════════════════════ */
+.legend-strip {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.leg-item:hover { color: var(--text); }
+.leg-dot {
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT & PYRAMID COLUMN
+   ═══════════════════════════════════════════════════════════════ */
+.layout {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.pyramid-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.pyramid-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.pyramid-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding-bottom: 8px;
+}
+
+.pyramid-base-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ── Pyramid layer tiles ────────────────────────────────────────── */
+.p-layer {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 2px;
+  user-select: none;
+}
+.p-layer:hover {
+  transform: scaleX(1.02) scaleY(1.03);
+  filter: brightness(1.2);
+  z-index: 20;
+}
+.p-layer.active-layer {
+  filter: brightness(1.3);
+  transform: scaleX(1.03) scaleY(1.05);
+  z-index: 25;
+}
+
+.p-layer-inner {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer sweep on hover */
+.p-layer-inner::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  transform: skewX(-20deg);
+  transition: left 0s;
+}
+.p-layer:hover .p-layer-inner::after {
+  left: 200%;
+  transition: left 0.5s ease;
+}
+
+.layer-icon {
+  font-size: clamp(14px, 2vw, 20px);
+  flex-shrink: 0;
+}
+.layer-name {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(7px, 1.2vw, 11px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+.layer-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(6px, 0.9vw, 9px);
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+/* Blinking click hint */
+.click-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  padding: 8px;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+.pulse-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1);   }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAIL PANEL
+   ═══════════════════════════════════════════════════════════════ */
+#detailMount {
+  position: relative;
+  z-index: 5;
+  padding: 0 24px 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.detail-panel {
+  animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+/* Panel header */
+.dp-header {
+  padding: 20px 28px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.dp-icon  { font-size: 28px; }
+.dp-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.dp-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Cards grid */
+.dp-body {
+  padding: 20px 28px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.dp-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 14px 16px;
+  border-left: 3px solid;
+  transition: background 0.2s;
+}
+.dp-card:hover { background: rgba(255, 255, 255, 0.05); }
+
+.dp-card-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.dp-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dp-card li {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text);
+  opacity: 0.85;
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.4;
+}
+.dp-card li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  opacity: 0.5;
+  font-size: 9px;
+}
+
+/* Multi-AZ strip */
+.az-strip {
+  display: flex;
+  gap: 8px;
+  padding: 12px 28px;
+  background: rgba(0, 229, 255, 0.03);
+  border-top: 1px solid rgba(0, 229, 255, 0.08);
+}
+.az-zone {
+  flex: 1;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: center;
+}
+.az-zone-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  color: var(--L1);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.az-zone-items {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+footer {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 16px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  border-top: 1px solid var(--border);
+}
